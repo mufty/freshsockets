@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script>
+	$(".debug").append(document.location.host+document.location.pathname + "<br>");
+	var ws = new WebSocket("ws://localhost:8080/WonderfulSockets/websocket/test");
+	ws.onopen = function() {
+		console.log();
+	    $(".debug").append("Websocket Ready!!<br>");
+	}
+	ws.onmessage= function(data) {
+		var json = jQuery.parseJSON(data.data);
+		if(json.modelBinding){
+			$('[ws-model='+json.modelBinding+']').val(json.modelValue);
+		} else if(json.name){
+			$('#name').val(json.name);
+			$('#surname').val(json.surname);
+			$('#message').val(json.message);
+		} else {
+			$(".debug").append(json + "<br>");
+		}
+	}
+	            
+	function sendMessage() {
+	   // ws.send('{"name":"John","surname":"Doe","message":"Hello","id":"1"}');
+	}
+	
+	function sendChange(e){
+		var elm = $(e.currentTarget);
+		var wsModel = elm.attr("ws-model");
+		var wsValue;
+		if(elm.val)
+			wsValue = elm.val();
+		ws.send('{"modelBinding":"'+wsModel+'","modelValue":"'+wsValue+'", "action":"update"}');
+	}
+	
+	window.onload = function(){
+		$('[ws-model]').each(function(i, e){
+			var elm = $(e);
+			if(elm.change){
+				elm.change(sendChange);
+			}
+		});
+		
+		$("#boha").click(function(){
+			sendMessage();
+		});
+	}
+</script>
+</head>
+<body>
+<div class="debug">Debug: <br></div>
+<div>
+	<label>Name: </label><input type="text" ws-model="mane" id="name"/>
+	<label>Surname: </label><input type="text" ws-model="surname" id="surname"/>
+	<label>Message: </label><input type="text" ws-model="message" id="message"/>
+</div>
+<button id="boha">send message</button>
+</body>
+</html>
