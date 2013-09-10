@@ -11,7 +11,7 @@
 	ws.onopen = function() {
 		console.log();
 	    $(".debug").append("Websocket Ready!!<br>");
-	}
+	};
 	ws.onmessage= function(data) {
 		var json = jQuery.parseJSON(data.data);
 		if(json.modelBinding){
@@ -23,7 +23,7 @@
 		} else {
 			$(".debug").append(json + "<br>");
 		}
-	}
+	};
 	            
 	function sendMessage() {
 	   // ws.send('{"name":"John","surname":"Doe","message":"Hello","id":"1"}');
@@ -49,7 +49,7 @@
 		$("#boha").click(function(){
 			sendMessage();
 		});
-	}
+	};
 </script>
 </head>
 <body>
