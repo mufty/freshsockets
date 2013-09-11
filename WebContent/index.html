@@ -3,17 +3,15 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
-<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
-<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script src="client/jqueryCustom/jquery.min.js"></script>
 <script>
 	$(".debug").append(document.location.host+document.location.pathname + "<br>");
 	var ws = new WebSocket("ws://localhost:8080/WonderfulSockets/websocket/test");
 	ws.onopen = function() {
-		console.log();
 	    $(".debug").append("Websocket Ready!!<br>");
 	};
 	ws.onmessage= function(data) {
-		var json = jQuery.parseJSON(data.data);
+		var json = JSON.parse(data.data);
 		if(json.modelBinding){
 			$('[ws-model='+json.modelBinding+']').val(json.modelValue);
 		} else if(json.name){
