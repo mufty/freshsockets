@@ -4,6 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
 <script src="client/jqueryCustom/jquery.min.js"></script>
+<script src="../FreshSocketsClient/DOM/traversal.js"></script>
 <script>
 	$(".debug").append(document.location.host+document.location.pathname + "<br>");
 	var ws = new WebSocket("ws://localhost:8080/WonderfulSockets/websocket/test");
@@ -13,7 +14,12 @@
 	ws.onmessage= function(data) {
 		var json = JSON.parse(data.data);
 		if(json.modelBinding){
-			$('[ws-model='+json.modelBinding+']').val(json.modelValue);
+			var a = document.getElementsByAttr("ws-model="+json.modelBinding);
+			for(var i in a){
+				var elm = a[i];
+				elm.val(json.modelValue);
+			}
+			//$('[ws-model='+json.modelBinding+']').val(json.modelValue);
 		} else if(json.name){
 			$('#name').val(json.name);
 			$('#surname').val(json.surname);
@@ -23,12 +29,12 @@
 		}
 	};
 	            
-	function sendMessage() {
+	/*function sendMessage() {
 	   // ws.send('{"name":"John","surname":"Doe","message":"Hello","id":"1"}');
-	}
+	}*/
 	
 	function sendChange(e){
-		var elm = $(e.currentTarget);
+		var elm = e.currentTarget;
 		var wsModel = elm.attr("ws-model");
 		var wsValue;
 		if(elm.val)
@@ -37,16 +43,21 @@
 	}
 	
 	window.onload = function(){
-		$('[ws-model]').each(function(i, e){
+		var a = document.getElementsByAttr("ws-model");
+		for(var i in a){
+			var elm = a[i];
+			elm.onchange = sendChange;
+		};
+		/*$('[ws-model]').each(function(i, e){
 			var elm = $(e);
 			if(elm.change){
 				elm.change(sendChange);
 			}
-		});
+		});*/
 		
-		$("#boha").click(function(){
+		/*$("#boha").click(function(){
 			sendMessage();
-		});
+		});*/
 	};
 </script>
 </head>
