@@ -3,14 +3,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
-<script src="client/jqueryCustom/jquery.min.js"></script>
 <script src="../FreshSocketsClient/DOM/traversal.js"></script>
 <script>
-	$(".debug").append(document.location.host+document.location.pathname + "<br>");
 	var ws = new WebSocket("ws://localhost:8080/WonderfulSockets/websocket/test");
-	ws.onopen = function() {
-	    $(".debug").append("Websocket Ready!!<br>");
-	};
 	ws.onmessage= function(data) {
 		var json = JSON.parse(data.data);
 		if(json.modelBinding){
@@ -20,11 +15,9 @@
 				elm.val(json.modelValue);
 			}
 		} else if(json.name){
-			$('#name').val(json.name);
-			$('#surname').val(json.surname);
-			$('#message').val(json.message);
-		} else {
-			$(".debug").append(json + "<br>");
+			document.getElementById('name').val(json.name);
+			document.getElementById('surname').val(json.surname);
+			document.getElementById('message').val(json.message);
 		}
 	};
 	
@@ -49,7 +42,7 @@
 <body>
 <div class="debug">Debug: <br></div>
 <div>
-	<label>Name: </label><input type="text" ws-model="mane" id="name"/>
+	<label>Name: </label><input type="text" ws-model="name" id="name"/>
 	<label>Surname: </label><input type="text" ws-model="surname" id="surname"/>
 	<label>Message: </label><input type="text" ws-model="message" id="message"/>
 </div>
