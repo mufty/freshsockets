@@ -19,7 +19,6 @@
 				var elm = a[i];
 				elm.val(json.modelValue);
 			}
-			//$('[ws-model='+json.modelBinding+']').val(json.modelValue);
 		} else if(json.name){
 			$('#name').val(json.name);
 			$('#surname').val(json.surname);
@@ -28,10 +27,6 @@
 			$(".debug").append(json + "<br>");
 		}
 	};
-	            
-	/*function sendMessage() {
-	   // ws.send('{"name":"John","surname":"Doe","message":"Hello","id":"1"}');
-	}*/
 	
 	function sendChange(e){
 		var elm = e.currentTarget;
@@ -48,16 +43,6 @@
 			var elm = a[i];
 			elm.onchange = sendChange;
 		};
-		/*$('[ws-model]').each(function(i, e){
-			var elm = $(e);
-			if(elm.change){
-				elm.change(sendChange);
-			}
-		});*/
-		
-		/*$("#boha").click(function(){
-			sendMessage();
-		});*/
 	};
 </script>
 </head>
@@ -68,6 +53,5 @@
 	<label>Surname: </label><input type="text" ws-model="surname" id="surname"/>
 	<label>Message: </label><input type="text" ws-model="message" id="message"/>
 </div>
-<button id="boha">send message</button>
 </body>
 </html>
