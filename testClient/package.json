@@ -1,0 +1,16 @@
+{
+  "name": "FreshSocketsClientTest",
+  "version": "0.1.0",
+  "description": "FreshSocketsClientTest",
+  "scripts": {
+    "test": "echo \"Error: no test specified! Configure in package.json\" && exit 1"
+  },
+  "repository": "",
+  "keywords": [
+    "Node.js",
+    "Eclipse",
+    "Nodeclipse"
+  ],
+  "author": "",
+  "license": "MIT"
+}
