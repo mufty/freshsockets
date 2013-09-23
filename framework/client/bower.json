@@ -1,0 +1,13 @@
+{
+  "name": "FreshSockets",
+  "version": "0.0.1",
+  "description": "Web sockets based Client/Server framework",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
