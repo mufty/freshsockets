@@ -19,6 +19,7 @@
     "grunt-contrib-nodeunit": "~0.2.0",
     "grunt-contrib-uglify": "~0.2.2",
     "grunt-text-replace": "~0.3.7",
+    "grunt-requirejs":"",
     "requirejs":"~2.1.8"
   },
   "scripts": {

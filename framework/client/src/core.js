@@ -1,3 +1,7 @@
+require.config({
+	nodeRequire: require
+});
+
 require(['DOM/traversal'], function(){
 	var ws = new WebSocket("ws://localhost:8080/WonderfulSockets/websocket/test");
 	ws.onmessage= function(data) {
