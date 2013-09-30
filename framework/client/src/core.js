@@ -50,19 +50,23 @@ require(['DOM/traversal'], function(){
 			 */
 			var url = ce.attr(cfg.prefix + "-host") + ce.attr(cfg.prefix + "-app") + ce.attr(cfg.prefix + "-model");
 			
-			ws = new WebSocket("ws://localhost:8080/WonderfulSockets/websocket/test");
+			ws = new WebSocket(url);
 			ws.onmessage= function(data) {
 				var json = JSON.parse(data.data);
-				if(json.modelBinding){
+				if(json.modelBinding && json.modelValue){
 					var a = document.getElementsByAttr(cfg.prefix + "-model-binding="+json.modelBinding);
 					for(var i in a){
 						var elm = a[i];
 						elm.val(json.modelValue);
 					}
-				} else if(json.name){
-					document.getElementById('name').val(json.name);
-					document.getElementById('surname').val(json.surname);
-					document.getElementById('message').val(json.message);
+				} else {
+					for(var k in json){
+						var a = document.getElementsByAttr(cfg.prefix + "-model-binding="+k);
+						for(var i in a){
+							var elm = a[i];
+							elm.val(json[k]);
+						}
+					}
 				}
 			};
 		}
@@ -70,7 +74,7 @@ require(['DOM/traversal'], function(){
 	
 	function sendChange(e){
 		var elm = e.currentTarget;
-		var wsModel = elm.attr(cfg.prefix + "-model");
+		var wsModel = elm.attr(cfg.prefix + "-model-binding");
 		var wsValue;
 		if(elm.val)
 			wsValue = elm.val();
