@@ -47,7 +47,7 @@ public class TestEndpoint {
 	
 	@OnClose
 	public void end(){
-		
+		connections.remove(this);
 	}
 	
 	@OnMessage
