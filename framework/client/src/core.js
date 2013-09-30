@@ -3,12 +3,17 @@ require.config({
 });
 
 require(['DOM/traversal'], function(){
-	var ws;
+	var ws, cfg;
+	
+	//TODO configuration for custom attribute prefix and others...
+	cfg = {
+		prefix: "fs"
+	};
 	
 	connect();
 	
 	function connect(){
-		var connectionElements = document.getElementsByAttr("ws-host");
+		var connectionElements = document.getElementsByAttr(cfg.prefix + "-host");
 		
 		for(var index in connectionElements){
 			var ce = connectionElements[index];
@@ -43,13 +48,13 @@ require(['DOM/traversal'], function(){
 			 *    <elm ws-model-binding="modelBinding2"/>
 			 * </elm>
 			 */
-			var url = ce.attr("ws-host") + ce.attr("ws-app") + ce.attr("ws-model");
+			var url = ce.attr(cfg.prefix + "-host") + ce.attr(cfg.prefix + "-app") + ce.attr(cfg.prefix + "-model");
 			
 			ws = new WebSocket("ws://localhost:8080/WonderfulSockets/websocket/test");
 			ws.onmessage= function(data) {
 				var json = JSON.parse(data.data);
 				if(json.modelBinding){
-					var a = document.getElementsByAttr("ws-model-binding="+json.modelBinding);
+					var a = document.getElementsByAttr(cfg.prefix + "-model-binding="+json.modelBinding);
 					for(var i in a){
 						var elm = a[i];
 						elm.val(json.modelValue);
@@ -65,7 +70,7 @@ require(['DOM/traversal'], function(){
 	
 	function sendChange(e){
 		var elm = e.currentTarget;
-		var wsModel = elm.attr("ws-model");
+		var wsModel = elm.attr(cfg.prefix + "-model");
 		var wsValue;
 		if(elm.val)
 			wsValue = elm.val();
@@ -73,7 +78,7 @@ require(['DOM/traversal'], function(){
 	}
 	
 	function init(){
-		var a = document.getElementsByAttr("ws-model-binding");
+		var a = document.getElementsByAttr(cfg.prefix + "-model-binding");
 		for(var i in a){
 			var elm = a[i];
 			elm.onchange = sendChange;
