@@ -33,10 +33,10 @@
 		}
 	};
 	
-	d.getElementsByAttr = function(attr){
+	var getElementsByAttr = function(attr){
 		var foundElements = [];
-		for(var i in d.childNodes){
-			var elm = d.childNodes[i];
+		for(var i in this.childNodes){
+			var elm = this.childNodes[i];
 			if(elm.nodeType == Element.ELEMENT_NODE){
 				if(hasAttr(elm, attr)){
 					foundElements[foundElements.length] = elm;
@@ -50,6 +50,9 @@
 		
 		return foundElements;
 	};
+	
+	Element.prototype.getElementsByAttr = getElementsByAttr;
+	Document.prototype.getElementsByAttr = getElementsByAttr;
 	
 	Element.prototype.attr = function(name, set){
 		if(set && this.setAttribute){

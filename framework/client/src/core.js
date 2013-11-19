@@ -19,7 +19,7 @@ require(['DOM/traversal'], function(){
 			var ce = connectionElements[index];
 			
 			//TODO multiple connections
-			//TODO can be in parent elements so we need to travese then
+			//TODO can be in parent elements so we need to traverse then
 			/*
 			 * example 1:
 			 * 
@@ -48,28 +48,78 @@ require(['DOM/traversal'], function(){
 			 *    <elm ws-model-binding="modelBinding2"/>
 			 * </elm>
 			 */
-			var url = ce.attr(cfg.prefix + "-host") + ce.attr(cfg.prefix + "-app") + ce.attr(cfg.prefix + "-model");
+			var hasAppConnection = false, hasModelConnection = false;
+			var url = ce.attr(cfg.prefix + "-host");
 			
-			ws = new WebSocket(url);
-			ws.onmessage= function(data) {
-				var json = JSON.parse(data.data);
-				if(json.modelBinding && json.modelValue){
-					var a = document.getElementsByAttr(cfg.prefix + "-model-binding="+json.modelBinding);
-					for(var i in a){
-						var elm = a[i];
-						elm.val(json.modelValue);
-					}
-				} else {
-					for(var k in json){
-						var a = document.getElementsByAttr(cfg.prefix + "-model-binding="+k);
-						for(var i in a){
-							var elm = a[i];
-							elm.val(json[k]);
+			if(ce.attr(cfg.prefix + "-app")) {
+				url +=ce.attr(cfg.prefix + "-app");
+				hasAppConnection = true;
+			}
+			
+			if(hasAppConnection && ce.attr(cfg.prefix + "-model")) {
+				url += ce.attr(cfg.prefix + "-model");
+				hasModelConnection = true;
+			}
+			
+			//find app childs
+			if(!hasAppConnection){
+				var appElements = findAppChilds(ce);
+				if(appElements.length > 0){
+					for(var i in appElements){
+						var ae = appElements[i];
+						
+						url += ae.attr(cfg.prefix + "-app");
+						
+						if(ae.attr(cfg.prefix + "-model")){
+							url += ae.attr(cfg.prefix + "-model");
+							
+							connectSocket(url);
+						} else {
+							var modelElements = findModelChilds(ae);
+							for(var x in modelElements){
+								var me = modelElements[x];
+								
+								url += me.attr(cfg.prefix + "-model");
+								
+								connectSocket(url);
+							}
 						}
 					}
 				}
-			};
+			}
 		}
+	}
+	
+	function connectSocket(url){
+		ws = new WebSocket(url);
+		ws.onmessage= function(data) {
+			var json = JSON.parse(data.data);
+			if(json.modelBinding && json.modelValue){
+				var a = document.getElementsByAttr(cfg.prefix + "-model-binding="+json.modelBinding);
+				for(var i in a){
+					var elm = a[i];
+					elm.val(json.modelValue);
+				}
+			} else {
+				for(var k in json){
+					var a = document.getElementsByAttr(cfg.prefix + "-model-binding="+k);
+					for(var i in a){
+						var elm = a[i];
+						elm.val(json[k]);
+					}
+				}
+			}
+		};	
+	}
+	
+	function findAppChilds(e){
+		var appElements = e.getElementsByAttr(cfg.prefix + "-app");
+		return appElements;
+	}
+	
+	function findModelChilds(e){
+		var modelElements = e.getElementsByAttr(cfg.prefix + "-model");
+		return modelElements;
 	}
 	
 	function sendChange(e){

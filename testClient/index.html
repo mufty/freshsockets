@@ -7,9 +7,9 @@
 		<script data-main="../framework/client/src/core" src="../framework/client/node_modules/requirejs/require.js"></script>
 		<!--script src="../framework/client/build/production/FreshSocketsClient.min.js"></script-->
 	</head>
-	<body>
-		<div class="debug" fs-host="ws://localhost:8080" fs-app="/WonderfulSockets" fs-model="/websocket/test">Debug: <br></div>
-		<div>
+	<body fs-host="ws://localhost:8080">
+		<div class="debug">Debug: <br></div>
+		<div fs-app="/WonderfulSockets" fs-model="/websocket/test">
 			<label>Name: </label><input type="text" fs-model-binding="name" id="name"/>
 			<label>Surname: </label><input type="text" fs-model-binding="surname" id="surname"/>
 			<label>Message: </label><input type="text" fs-model-binding="message" id="message"/>
