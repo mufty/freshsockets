@@ -30,5 +30,9 @@ define(['config/config'],function(cfg){
 		};
 	};
 	
+	connection.prototype.send = function(obj){
+		this.ws.send(obj);
+	};
+	
 	return connection;
 });
