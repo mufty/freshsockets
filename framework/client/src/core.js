@@ -2,13 +2,9 @@ require.config({
 	nodeRequire: require
 });
 
-require(['DOM/traversal'], function(){
-	var ws, cfg;
-	
-	//TODO configuration for custom attribute prefix and others...
-	cfg = {
-		prefix: "fs"
-	};
+require(['DOM/traversal', 'socket/connection', 'config/config'], function(traversal, connection, cfg){
+	console.log(arguments);
+	var ws, Connection = connection;
 	
 	connect();
 	
@@ -73,7 +69,7 @@ require(['DOM/traversal'], function(){
 						if(ae.attr(cfg.prefix + "-model")){
 							url += ae.attr(cfg.prefix + "-model");
 							
-							connectSocket(url);
+							connectSocket(url, ae);
 						} else {
 							var modelElements = findModelChilds(ae);
 							for(var x in modelElements){
@@ -81,7 +77,7 @@ require(['DOM/traversal'], function(){
 								
 								url += me.attr(cfg.prefix + "-model");
 								
-								connectSocket(url);
+								connectSocket(url, me);
 							}
 						}
 					}
@@ -90,26 +86,8 @@ require(['DOM/traversal'], function(){
 		}
 	}
 	
-	function connectSocket(url){
-		ws = new WebSocket(url);
-		ws.onmessage= function(data) {
-			var json = JSON.parse(data.data);
-			if(json.modelBinding && json.modelValue){
-				var a = document.getElementsByAttr(cfg.prefix + "-model-binding="+json.modelBinding);
-				for(var i in a){
-					var elm = a[i];
-					elm.val(json.modelValue);
-				}
-			} else {
-				for(var k in json){
-					var a = document.getElementsByAttr(cfg.prefix + "-model-binding="+k);
-					for(var i in a){
-						var elm = a[i];
-						elm.val(json[k]);
-					}
-				}
-			}
-		};	
+	function connectSocket(url, me){
+		ws = new Connection(url, me);
 	}
 	
 	function findAppChilds(e){
