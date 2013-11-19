@@ -13,8 +13,7 @@ require(['DOM/traversal', 'socket/connection', 'config/config'], function(traver
 		for(var index in connectionElements){
 			var ce = connectionElements[index];
 			
-			//TODO multiple connections
-			//TODO can be in parent elements so we need to traverse then
+			//TODO figure out if we need a multi-connection of some sort 
 			/*
 			 * example 1:
 			 * 
