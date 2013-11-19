@@ -3,7 +3,6 @@ require.config({
 });
 
 require(['DOM/traversal', 'socket/connection', 'config/config'], function(traversal, connection, cfg){
-	console.log(arguments);
 	var ws, Connection = connection;
 	
 	connect();
@@ -44,7 +43,7 @@ require(['DOM/traversal', 'socket/connection', 'config/config'], function(traver
 			 *    <elm ws-model-binding="modelBinding2"/>
 			 * </elm>
 			 */
-			var hasAppConnection = false, hasModelConnection = false;
+			var hasAppConnection = false;
 			var url = ce.attr(cfg.prefix + "-host");
 			
 			if(ce.attr(cfg.prefix + "-app")) {
@@ -54,7 +53,6 @@ require(['DOM/traversal', 'socket/connection', 'config/config'], function(traver
 			
 			if(hasAppConnection && ce.attr(cfg.prefix + "-model")) {
 				url += ce.attr(cfg.prefix + "-model");
-				hasModelConnection = true;
 			}
 			
 			//find app childs
