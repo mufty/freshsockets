@@ -6,11 +6,11 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.websocket.OnClose;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
+import javax.websocket.CloseReason;
+import javax.websocket.Endpoint;
+import javax.websocket.EndpointConfig;
+import javax.websocket.MessageHandler;
 import javax.websocket.Session;
-import javax.websocket.server.ServerEndpoint;
 
 import org.mb.socket.pojo.BasePOJO;
 import org.mb.socket.pojo.Connection;
@@ -19,8 +19,7 @@ import org.mb.socket.pojo.TestPOJO;
 
 import com.google.gson.Gson;
 
-@ServerEndpoint(value = "/websocket/test")
-public class TestEndpoint {
+public final class TestEndpoint extends Endpoint {
 	
 	private static final Set<TestEndpoint> connections = new CopyOnWriteArraySet<>();
 	private static final String GUEST_PREFIX = "Guest";
@@ -36,36 +35,6 @@ public class TestEndpoint {
 	public TestEndpoint(){
 		connection = new Connection();
 		connection.setGuestName(GUEST_PREFIX + connectionIds.getAndIncrement());
-	}
-	
-	@OnOpen
-	public void start(Session session){
-		this.session = session;
-		connections.add(this);
-		broadcast(testPojo);
-	}
-	
-	@OnClose
-	public void end(){
-		connections.remove(this);
-	}
-	
-	@OnMessage
-	public void incoming(String message){
-		ModelBinding pojo = gson.fromJson(message, ModelBinding.class);
-		if(pojo.getAction() != null){
-			switch (pojo.getAction()) {
-				case ModelBinding.ACTION_UPDATE:
-					updatePojo(pojo);
-					broadcast(pojo);
-					break;
-				default:
-					broadcast(pojo);
-					break;
-			}
-		} else {
-			broadcast(pojo);
-		}
 	}
 	
 	private static void updatePojo(ModelBinding mb){
@@ -95,7 +64,9 @@ public class TestEndpoint {
 		for(TestEndpoint client : connections){
 			try {
 				System.out.println(gson.toJson(pojo));
-				client.session.getBasicRemote().sendText(gson.toJson(pojo));
+				
+				if(client.session.isOpen())
+					client.session.getBasicRemote().sendText(gson.toJson(pojo));
 			} catch (IOException e) {
 				connections.remove(client);
 				try {
@@ -106,5 +77,41 @@ public class TestEndpoint {
 			}
 		}
 	}
+	
+	@Override
+	public void onClose(Session session, CloseReason closeReason) {
+		//super.onClose(session, closeReason);
+		connections.remove(this);
+	}
+
+	@Override
+	public void onOpen(Session session, EndpointConfig arg1) {
+		this.session = session;
+		this.session.addMessageHandler(stringHandler);
+		connections.add(this);
+		broadcast(testPojo);
+	}
+	
+	private final MessageHandler.Whole<String> stringHandler = new MessageHandler.Whole<String>() {
+
+		@Override
+		public void onMessage(String message) {
+			ModelBinding pojo = gson.fromJson(message, ModelBinding.class);
+			if(pojo.getAction() != null){
+				switch (pojo.getAction()) {
+					case ModelBinding.ACTION_UPDATE:
+						updatePojo(pojo);
+						broadcast(pojo);
+						break;
+					default:
+						broadcast(pojo);
+						break;
+				}
+			} else {
+				broadcast(pojo);
+			}
+			
+		}
+	}; 
 
 }
