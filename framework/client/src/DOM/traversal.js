@@ -70,6 +70,11 @@
 				this.value = set;
 			else
 				return this.value;
+		} else if(this.nodeType == Element.ELEMENT_NODE && this.tagName != "INPUT"){
+			if(set)
+				this.innerHTML = set;
+			else
+				return this.innerHTML;
 		}
 	};
 })(document);

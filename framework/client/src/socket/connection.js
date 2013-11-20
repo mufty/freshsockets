@@ -16,6 +16,7 @@ define(['config/config'],function(cfg){
 				var a = thi$.modelElement.getElementsByAttr(cfg.prefix + "-model-binding="+json.modelBinding);
 				for(var i in a){
 					var elm = a[i];
+					console.log(elm);
 					elm.val(json.modelValue);
 				}
 			} else {

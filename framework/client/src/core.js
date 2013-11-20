@@ -100,7 +100,7 @@ require(['DOM/traversal', 'socket/connection', 'config/config'], function(traver
 	function sendChange(e){
 		var elm = e.currentTarget;
 		var wsModel = elm.attr(cfg.prefix + "-model-binding");
-		var wsValue;
+		var wsValue = null;
 		if(elm.val)
 			wsValue = elm.val();
 		ws.send('{"modelBinding":"'+wsModel+'","modelValue":"'+wsValue+'", "action":"update"}');
