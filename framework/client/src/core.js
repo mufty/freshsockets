@@ -42,7 +42,7 @@ require(['DOM/traversal', 'socket/connection', 'config/config'], function(traver
 			 *    <elm ws-model-binding="modelBinding2"/>
 			 * </elm>
 			 */
-			var hasAppConnection = false;
+			var hasAppConnection = false, hasModelConnection = false;
 			var url = ce.attr(cfg.prefix + "-host");
 			
 			if(ce.attr(cfg.prefix + "-app")) {
@@ -51,6 +51,7 @@ require(['DOM/traversal', 'socket/connection', 'config/config'], function(traver
 			}
 			
 			if(hasAppConnection && ce.attr(cfg.prefix + "-model")) {
+				hasModelConnection = true;
 				url += ce.attr(cfg.prefix + "-model");
 			}
 			
@@ -61,12 +62,22 @@ require(['DOM/traversal', 'socket/connection', 'config/config'], function(traver
 					for(var i in appElements){
 						var ae = appElements[i];
 						
-						url += ae.attr(cfg.prefix + "-app");
+						var appUrl = url + ae.attr(cfg.prefix + "-app");
 						
 						if(ae.attr(cfg.prefix + "-model")){
-							url += ae.attr(cfg.prefix + "-model");
+							url = appUrl + ae.attr(cfg.prefix + "-model");
 							
 							connectSocket(url, ae);
+							
+							//check if there are some more models inside this element
+							var modelElements = findModelChilds(ae);
+							for(var x in modelElements){
+								var me = modelElements[x];
+								
+								url = appUrl + me.attr(cfg.prefix + "-model");
+								
+								connectSocket(url, me);
+							}
 						} else {
 							var modelElements = findModelChilds(ae);
 							for(var x in modelElements){
@@ -79,6 +90,17 @@ require(['DOM/traversal', 'socket/connection', 'config/config'], function(traver
 						}
 					}
 				}
+			} else if(hasAppConnection && !hasModelConnection) {
+				var modelElements = findModelChilds(ce);
+				for(var x in modelElements){
+					var me = modelElements[x];
+					
+					url += me.attr(cfg.prefix + "-model");
+					
+					connectSocket(url, me);
+				}
+			} else {
+				connectSocket(url, me);
 			}
 		}
 	}
